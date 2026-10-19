@@ -1,23 +1,370 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>alyxz.com</title>
-    <style>
-        body { font-family: -apple-system, "Segoe UI", sans-serif; display: flex;
-               min-height: 100vh; align-items: center; justify-content: center;
-               margin: 0; background: #f5f5f5; color: #333; }
-        .card { background: #fff; padding: 3rem 4rem; border-radius: 12px;
-                box-shadow: 0 4px 16px rgba(0,0,0,.08); text-align: center; }
-        h1 { margin: 0 0 .5rem; font-size: 1.6rem; }
-        p { margin: 0; color: #888; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网盘资源分享 - 发现优质资源</title>
+<link href="https://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://apps.bdimg.com/libs/fontawesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        background: #fff;
+        color: #333;
+        -webkit-font-smoothing: antialiased;
+    }
+    a { color: #333; }
+    a:hover, a:focus { color: #1a73e8; text-decoration: none; }
+
+    /* 导航 */
+    .navbar-mini {
+        background: #fff;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 0;
+        min-height: 56px;
+    }
+    .navbar-mini .navbar-brand {
+        height: 56px;
+        line-height: 26px;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: .5px;
+    }
+    .navbar-mini .navbar-nav > li > a {
+        height: 56px;
+        line-height: 26px;
+        font-size: 14px;
+        color: #555;
+    }
+    .navbar-mini .navbar-nav > li > a:hover { color: #1a73e8; }
+    .navbar-mini .navbar-toggle { margin-top: 11px; border-color: #eee; }
+    .navbar-mini .navbar-toggle .icon-bar { background: #888; }
+
+    /* 搜索区 */
+    .hero {
+        padding: 90px 0 70px;
+        text-align: center;
+    }
+    .hero h1 {
+        font-size: 30px;
+        font-weight: 300;
+        margin: 0 0 10px;
+        letter-spacing: 1px;
+    }
+    .hero p.sub {
+        color: #999;
+        font-size: 14px;
+        margin-bottom: 34px;
+    }
+    .search-box { max-width: 620px; margin: 0 auto; }
+    .search-box .input-group { box-shadow: 0 2px 14px rgba(0,0,0,.07); }
+    .search-box .form-control {
+        height: 48px;
+        border: 1px solid #e6e6e6;
+        border-right: 0;
+        box-shadow: none;
+        font-size: 15px;
+        padding-left: 18px;
+    }
+    .search-box .form-control:focus { border-color: #1a73e8; }
+    .search-box .btn-search {
+        height: 48px;
+        padding: 0 30px;
+        background: #1a73e8;
+        border: 1px solid #1a73e8;
+        color: #fff;
+        font-size: 15px;
+    }
+    .search-box .btn-search:hover { background: #1765cc; border-color: #1765cc; }
+    .hot-words { margin-top: 18px; font-size: 13px; color: #999; }
+    .hot-words a { color: #888; margin: 0 8px; }
+    .hot-words a:hover { color: #1a73e8; }
+
+    /* 热门资源 */
+    .section { padding: 10px 0 60px; }
+    .section-head {
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 12px;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    .section-head h2 {
+        float: left;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        line-height: 24px;
+    }
+    .section-head h2 .fa { color: #ff6a00; margin-right: 6px; font-size: 15px; }
+    .section-head .more { float: right; font-size: 13px; color: #999; line-height: 24px; }
+    .section-head .more:hover { color: #1a73e8; }
+
+    .res-item {
+        display: block;
+        padding: 18px 16px;
+        border: 1px solid #f0f0f0;
+        border-radius: 3px;
+        margin-bottom: 16px;
+        transition: all .2s ease;
+        background: #fff;
+    }
+    .res-item:hover {
+        border-color: #d6e4fb;
+        box-shadow: 0 4px 16px rgba(26,115,232,.08);
+        transform: translateY(-2px);
+    }
+    .res-item .ico {
+        float: left;
+        width: 42px; height: 42px;
+        line-height: 42px;
+        text-align: center;
+        border-radius: 3px;
+        background: #f5f7fa;
+        color: #1a73e8;
+        font-size: 18px;
+        margin-right: 14px;
+    }
+    .res-item .info { overflow: hidden; }
+    .res-item .title {
+        font-size: 15px;
+        line-height: 22px;
+        margin: 0 0 6px;
+        color: #333;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 44px;
+    }
+    .res-item:hover .title { color: #1a73e8; }
+    .res-item .meta { font-size: 12px; color: #aaa; }
+    .res-item .meta span { margin-right: 14px; }
+    .res-item .meta .fa { margin-right: 4px; }
+
+    /* 分类标签 */
+    .cat-bar { text-align: center; margin-top: 8px; margin-bottom: 46px; }
+    .cat-bar a {
+        display: inline-block;
+        padding: 6px 18px;
+        margin: 4px;
+        border: 1px solid #eee;
+        border-radius: 20px;
+        font-size: 13px;
+        color: #666;
+    }
+    .cat-bar a:hover, .cat-bar a.active {
+        border-color: #1a73e8;
+        color: #1a73e8;
+        background: #f5f9ff;
+    }
+
+    /* 底部 */
+    .footer {
+        border-top: 1px solid #f0f0f0;
+        padding: 34px 0 28px;
+        font-size: 13px;
+        color: #999;
+        text-align: center;
+    }
+    .footer .links { margin-bottom: 12px; }
+    .footer .links a { margin: 0 12px; color: #888; }
+    .footer .links a:hover { color: #1a73e8; }
+    .footer .record { line-height: 22px; }
+    .footer .record a { color: #999; }
+    .footer .record a:hover { color: #1a73e8; }
+    .footer .record img { height: 14px; margin-right: 3px; vertical-align: -2px; }
+
+    @media (max-width: 767px) {
+        .hero { padding: 56px 0 44px; }
+        .hero h1 { font-size: 24px; }
+        .section-head h2, .section-head .more { float: none; }
+        .section-head .more { display: inline-block; margin-top: 6px; }
+    }
+</style>
 </head>
 <body>
-    <div class="card">
-        <h1>alyxz.com</h1>
-        <p>Site initialized by oject.php</p>
+
+<!-- 导航区域 -->
+<nav class="navbar navbar-mini navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-main">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><i class="fa fa-cloud"></i> 云盘分享</a>
+        </div>
+        <div class="collapse navbar-collapse" id="nav-main">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">首页</a></li>
+                <li><a href="#">影视</a></li>
+                <li><a href="#">软件</a></li>
+                <li><a href="#">电子书</a></li>
+                <li><a href="#">课程</a></li>
+                <li><a href="#">音乐</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">最新收录</a></li>
+                <li><a href="#">资源求助</a></li>
+            </ul>
+        </div>
     </div>
+</nav>
+
+<!-- 搜索区域 -->
+<div class="hero">
+    <div class="container">
+        <h1>发现并分享优质网盘资源</h1>
+        <p class="sub">聚合全网公开分享的网盘链接，快速检索你需要的资源</p>
+        <div class="search-box">
+            <form action="#" method="get">
+                <div class="input-group">
+                    <input type="text" name="kw" class="form-control" placeholder="输入资源名称、关键词搜索…">
+                    <span class="input-group-btn">
+                        <button class="btn btn-search" type="submit"><i class="fa fa-search"></i> 搜索</button>
+                    </span>
+                </div>
+            </form>
+            <div class="hot-words">
+                热搜：
+                <a href="#">考研资料</a>
+                <a href="#">PDF电子书</a>
+                <a href="#">设计素材</a>
+                <a href="#">4K纪录片</a>
+                <a href="#">办公模板</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="cat-bar">
+        <a href="#" class="active">全部</a>
+        <a href="#">影视</a>
+        <a href="#">软件</a>
+        <a href="#">文档</a>
+        <a href="#">素材</a>
+        <a href="#">教程</a>
+        <a href="#">音乐</a>
+        <a href="#">其他</a>
+    </div>
+</div>
+
+<!-- 热门资源区域 -->
+<div class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2><i class="fa fa-fire"></i>热门资源</h2>
+            <a href="#" class="more">查看更多 <i class="fa fa-angle-right"></i></a>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-film"></i></div>
+                    <div class="info">
+                        <p class="title">2024 高清纪录片合集 50 部（1080P 中字）</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>58.6 GB</span><span><i class="fa fa-download"></i>1.2万</span></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-book"></i></div>
+                    <div class="info">
+                        <p class="title">计算机编程经典电子书 300 本（PDF 高清扫描版）</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>4.2 GB</span><span><i class="fa fa-download"></i>8632</span></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-cube"></i></div>
+                    <div class="info">
+                        <p class="title">Adobe 2024 全家桶安装包（Win / Mac 双平台）</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>12.8 GB</span><span><i class="fa fa-download"></i>7421</span></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-paint-brush"></i></div>
+                    <div class="info">
+                        <p class="title">UI 设计素材大礼包：PSD / Sketch / Figma 源文件</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>9.1 GB</span><span><i class="fa fa-download"></i>6580</span></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-graduation-cap"></i></div>
+                    <div class="info">
+                        <p class="title">考研全科名师课程视频合集（含配套讲义）</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>86.4 GB</span><span><i class="fa fa-download"></i>5219</span></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-music"></i></div>
+                    <div class="info">
+                        <p class="title">无损音乐精选 1000 首（FLAC / APE 母带音质）</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>26.3 GB</span><span><i class="fa fa-download"></i>4907</span></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-file-text-o"></i></div>
+                    <div class="info">
+                        <p class="title">办公实用模板 2000 套：PPT / Excel / Word 全套</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>3.7 GB</span><span><i class="fa fa-download"></i>4366</span></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <a class="res-item" href="#">
+                    <div class="ico"><i class="fa fa-gamepad"></i></div>
+                    <div class="info">
+                        <p class="title">经典单机游戏合集（免安装绿色版 中文）</p>
+                        <div class="meta"><span><i class="fa fa-hdd-o"></i>120 GB</span><span><i class="fa fa-download"></i>3874</span></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 底部版权与备案 -->
+<footer class="footer">
+    <div class="container">
+        <div class="links">
+            <a href="#">关于我们</a>
+            <a href="#">资源投稿</a>
+            <a href="#">侵权投诉</a>
+            <a href="#">免责声明</a>
+            <a href="#">联系我们</a>
+        </div>
+        <div class="record">
+            <p style="margin-bottom:4px;">Copyright &copy; 2026 云盘分享 &nbsp;|&nbsp; 本站仅提供公开资源索引，不存储任何文件</p>
+            <p style="margin:0;">
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">鲁ICP备2025144109号-18</a>
+                &nbsp;&nbsp;
+                <a href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" rel="nofollow">
+                    <i class="fa fa-shield"></i> 鲁公网安备37130202373077号
+                </a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 </body>
 </html>
